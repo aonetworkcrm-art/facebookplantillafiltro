@@ -31,8 +31,10 @@ Ejemplos:
     )
     parser.add_argument("--dashboard", action="store_true",
                        help="Iniciar el dashboard web")
-    parser.add_argument("--port", type=int, default=5000,
-                       help="Puerto para el dashboard web (default: 5000)")
+    parser.add_argument("--port", type=int, default=0,
+                       help="Puerto para el dashboard web (default: auto-detect)")
+    parser.add_argument("--tunnel", action="store_true",
+                       help="Exponer dashboard públicamente vía Cloudflare Tunnel (gratis)")
     parser.add_argument("--version", action="store_true",
                        help="Mostrar versión")
     parser.add_argument("--export", type=str, metavar="CAMPAÑA",
@@ -60,7 +62,7 @@ Ejemplos:
     if args.dashboard:
         print("🚀 Iniciando dashboard web...")
         from dashboard.api import start_dashboard
-        start_dashboard(port=args.port)
+        start_dashboard(port=args.port, tunnel=args.tunnel)
         return
 
     if args.export:

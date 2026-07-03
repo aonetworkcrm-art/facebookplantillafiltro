@@ -5,6 +5,7 @@ Flask API server that exposes strategy data to the web dashboard.
 
 import os
 import sys
+import socket
 from datetime import datetime
 import json
 
@@ -431,11 +432,81 @@ def api_dashboard_summary():
     })
 
 
-def start_dashboard(host: str = "0.0.0.0", port: int = 5000, debug: bool = False):
-    """Start the dashboard web server."""
-    print(f"🌐 Dashboard web iniciado en http://localhost:{port}")
-    print(f"📊 API disponible en http://localhost:{port}/api/")
-    print("Presiona Ctrl+C para detener el servidor")
+def find_free_port(start: int = 8080, max_attempts: int = 20) -> int:
+    """Encuentra un puerto libre automáticamente."""
+    for port in range(start, start + max_attempts):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(1)
+            try:
+                s.bind(("0.0.0.0", port))
+                return port
+            except (OSError, socket.error):
+                continue
+    return start  # fallback, lanzará error si ocupado
+
+
+def start_dashboard(host: str = "0.0.0.0", port: int = 0, debug: bool = False, tunnel: bool = False):
+    """Start the dashboard web server.
+    
+    Si port=0, busca un puerto libre automáticamente.
+    Si tunnel=True, lanza cloudflared para túnel público.
+    """
+    if port == 0:
+        port = find_free_port()
+    
+    print(f"")
+    print(f"╔══════════════════════════════════════════════════╗")
+    print(f"║     🚀  AFILIADOS AI AGENT - DASHBOARD         ║")
+    print(f"╠══════════════════════════════════════════════════╣")
+    print(f"║  🌐 Local:    http://localhost:{port: <5}                ║")
+    print(f"║  📊 API:      http://localhost:{port}/api/       ║")
+    if tunnel:
+        print(f"║  🔗 Tunnel:   INICIANDO... (cloudflared)        ║")
+    print(f"║                                                  ║")
+    print(f"║  Presiona Ctrl+C para detener                   ║")
+    print(f"╚══════════════════════════════════════════════════╝")
+    print(f"")
+    
+    if tunnel:
+        import subprocess
+        import threading
+        import atexit
+        
+        _tunnel_process = None
+        
+        def start_tunnel():
+            nonlocal _tunnel_process
+            try:
+                print(f"🔗 Abriendo túnel público con Cloudflare...")
+                tunnel_url = f"http://localhost:{port}"
+                _tunnel_process = subprocess.Popen(
+                    ["cloudflared", "tunnel", "--url", tunnel_url],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+                _tunnel_process.wait()
+            except FileNotFoundError:
+                print(f"\n❌ cloudflared no está instalado.")
+                print(f"   Instálalo gratis: winget install cloudflared")
+                print(f"   O desde: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/")
+            except Exception as e:
+                print(f"\n❌ Error al iniciar tunnel: {e}")
+        
+        def cleanup_tunnel():
+            nonlocal _tunnel_process
+            if _tunnel_process and _tunnel_process.poll() is None:
+                print(f"\n🔌 Cerrando tunnel Cloudflare...")
+                _tunnel_process.terminate()
+                try:
+                    _tunnel_process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    _tunnel_process.kill()
+        
+        atexit.register(cleanup_tunnel)
+        
+        t = threading.Thread(target=start_tunnel, daemon=True)
+        t.start()
+    
     app.run(host=host, port=port, debug=debug)
 
 
