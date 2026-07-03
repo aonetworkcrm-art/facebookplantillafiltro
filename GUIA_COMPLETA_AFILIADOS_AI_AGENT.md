@@ -1542,6 +1542,8 @@ Inversión desde $97/mes
 ## 🚀 Mejoras Inmediatas (Prioridad Alta)
 
 - [x] **Automatización real con SeleniumBase** — ✅ ¡COMPLETADO! (facebook_poster.py)
+- [x] **Deploy con túnel Cloudflare** — ✅ ¡COMPLETADO! (--tunnel, start-tunnel.bat)
+- [x] **Auto-detección de puerto** — ✅ ¡COMPLETADO! (find_free_port, default 8080+)
 - [ ] **Integración con API de Hotmart** — Verificar comisiones y productos
 - [ ] **Exportar a PDF** — Reportes profesionales descargables
 - [ ] **Múltiples idiomas** — Inglés, portugués

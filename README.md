@@ -2,9 +2,10 @@
 
 **Sistema completo de marketing de afiliados basado en la estrategia: Grupos de Facebook + Hotmart**
 
-![Version](https://img.shields.io/badge/version-1.0.0-purple)
+![Version](https://img.shields.io/badge/version-1.1.0-purple)
 ![Python](https://img.shields.io/badge/python-3.8+-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+[![Deploy](https://img.shields.io/badge/🚀-Tunnel%20Cloudflare-blueviolet)](https://github.com/aonetworkcrm-art/facebookplantillafiltro)
 
 ---
 
@@ -56,13 +57,35 @@ python run.py
 
 Esto inicia el asistente interactivo en terminal con menús y paneles informativos.
 
-### Dashboard Web
+### Dashboard Web (Local)
 
 ```bash
+# Inicio rápido (puerto auto-detectado)
 python run.py --dashboard
+# o haz doble clic en: start.bat
 ```
 
-Luego abre tu navegador en: **http://localhost:5000**
+Luego abre tu navegador en: **http://localhost:8080** (o el puerto que se detecte)
+
+### Dashboard Web + Túnel Público (Cloudflare)
+
+```bash
+# Expone el dashboard en internet GRATIS vía Cloudflare Tunnel
+python run.py --dashboard --tunnel
+# o haz doble clic en: start-tunnel.bat
+```
+
+Esto genera una URL como `https://random.trycloudflare.com` que puedes compartir
+con cualquier persona. El túnel está activo mientras la ventana esté abierta.
+
+> ✅ **Requiere cloudflared** (ya instalado en tu sistema).
+> ❌ **No requiere registro ni tarjeta de crédito.**
+
+### Dashboard con puerto específico
+
+```bash
+python run.py --dashboard --port 3000
+```
 
 ### Comandos del Facebook Poster 🐘
 
@@ -78,6 +101,14 @@ python run.py --fb-post --fb-max 3
 
 # Habilitar/deshabilitar (se hace desde el dashboard o CLI)
 ```
+
+### Lanzadores Rápidos (.bat)
+
+| Archivo | Función |
+|---------|---------|
+| `start.bat` | Dashboard local (doble clic y funciona) |
+| `start-tunnel.bat` | Dashboard + túnel público Cloudflare |
+| `start-cli.bat` | CLI interactiva |
 
 ### Otros comandos
 
