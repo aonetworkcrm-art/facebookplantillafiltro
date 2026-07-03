@@ -1,0 +1,47 @@
+# ─── Python ─────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
+
+# ─── Entorno ─────────────────────────────────────────────────────────
+.env
+.venv/
+venv/
+env/
+virtualenv/
+
+# ─── Datos de Usuario (NO subir) ─────────────────────────────────────
+affiliate_agent.db
+*.db
+*.sqlite
+*.sqlite3
+post_log.json
+facebook_config.json
+
+# ─── Perfil de Chrome (Selenium) ─────────────────────────────────────
+chrome_profile/
+selenium_profile/
+
+# ─── IDE ─────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ─── Logs ────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── Reportes exportados ─────────────────────────────────────────────
+reports/
+export_*.json
+report_*.json

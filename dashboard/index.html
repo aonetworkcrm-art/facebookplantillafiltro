@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afiliados AI Agent - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">🤖</div>
+            <h1>Afiliados AI</h1>
+            <span class="version">v1.0</span>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item active" data-view="dashboard">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </li>
+            <li class="nav-item" data-view="campaigns">
+                <span class="nav-icon">📦</span>
+                <span>Campañas</span>
+            </li>
+            <li class="nav-item" data-view="groups">
+                <span class="nav-icon">🔍</span>
+                <span>Grupos</span>
+            </li>
+            <li class="nav-item" data-view="content">
+                <span class="nav-icon">📊</span>
+                <span>Contenido 80/20</span>
+            </li>
+            <li class="nav-item" data-view="leads">
+                <span class="nav-icon">💬</span>
+                <span>Leads</span>
+            </li>
+            <li class="nav-item" data-view="knowledge">
+                <span class="nav-icon">🧠</span>
+                <span>Knowledge Base</span>
+            </li>
+            <li class="nav-item" data-view="facebook">
+                <span class="nav-icon">🐘</span>
+                <span>Facebook Poster</span>
+            </li>
+            <li class="nav-item" data-view="config">
+                <span class="nav-icon">⚙️</span>
+                <span>Configuración</span>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Conectado</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard View -->
+        <section id="view-dashboard" class="view active">
+            <div class="view-header">
+                <h2>📊 Dashboard</h2>
+                <p class="subtitle">Resumen general de tu estrategia de afiliados</p>
+            </div>
+            <div class="stats-grid" id="dashboardStats">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="statCampaigns">0</span>
+                        <span class="stat-label">Campañas</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔍</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="statGroups">0</span>
+                        <span class="stat-label">Grupos</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="statContent">0</span>
+                        <span class="stat-label">Ideas de contenido</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💬</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="statLeads">0</span>
+                        <span class="stat-label">Leads</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="card">
+                    <h3>Pipeline de Leads</h3>
+                    <canvas id="leadsChart"></canvas>
+                </div>
+                <div class="card">
+                    <h3>Contenido 80/20</h3>
+                    <canvas id="contentChart"></canvas>
+                </div>
+                <div class="card full-width">
+                    <h3>Pipeline de Grupos</h3>
+                    <canvas id="groupsChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Campaigns View -->
+        <section id="view-campaigns" class="view">
+            <div class="view-header">
+                <h2>📦 Campañas</h2>
+                <button class="btn btn-primary" onclick="showNewCampaignModal()">+ Nueva Campaña</button>
+            </div>
+            <div class="card">
+                <div class="table-container" id="campaignsTable">
+                    <p class="empty-state">No hay campañas aún. ¡Crea tu primera campaña!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Groups View -->
+        <section id="view-groups" class="view">
+            <div class="view-header">
+                <h2>🔍 Grupos de Facebook</h2>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddGroupModal()">+ Añadir Grupo</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Pipeline de Grupos</h3>
+                <div class="pipeline-stats" id="groupsPipeline"></div>
+            </div>
+
+            <div class="card">
+                <h3>Prospectos</h3>
+                <div class="table-container" id="groupsTable">
+                    <p class="empty-state">No hay grupos registrados.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔑 Palabras Clave para Buscar</h3>
+                <div class="input-group">
+                    <input type="text" id="nicheKeywords" placeholder="Nicho (ej: finanzas, salud)" />
+                    <button class="btn btn-secondary" onclick="searchKeywords()">Buscar Keywords</button>
+                </div>
+                <div id="keywordsResult" class="keywords-list"></div>
+            </div>
+        </section>
+
+        <!-- Content View -->
+        <section id="view-content" class="view">
+            <div class="view-header">
+                <h2>📊 Planificador 80/20</h2>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="generateIdeas()">🎨 Generar Ideas</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Estadísticas 80/20</h3>
+                <div id="contentStats"></div>
+            </div>
+
+            <div class="card">
+                <h3>Calendario Semanal</h3>
+                <div id="contentCalendar" class="calendar-grid"></div>
+            </div>
+        </section>
+
+        <!-- Leads View -->
+        <section id="view-leads" class="view">
+            <div class="view-header">
+                <h2>💬 Leads WhatsApp</h2>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showAddLeadModal()">+ Nuevo Lead</button>
+                    <button class="btn btn-secondary" onclick="showWalingModal()">🔗 wa.link</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Pipeline</h3>
+                <div id="leadsPipeline"></div>
+            </div>
+
+            <div class="card">
+                <h3>Leads</h3>
+                <div class="table-container" id="leadsTable">
+                    <p class="empty-state">No hay leads registrados.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Knowledge Base View -->
+        <section id="view-knowledge" class="view">
+            <div class="view-header">
+                <h2>🧠 Knowledge Base</h2>
+                <p class="subtitle">Estrategias, frases y técnicas probadas</p>
+            </div>
+            <div class="knowledge-grid">
+                <div class="card" onclick="showKnowledge('sales')">
+                    <div class="knowledge-card-header">🧠</div>
+                    <h3>Psicología de Venta</h3>
+                    <p>8 principios fundamentales de persuasión</p>
+                </div>
+                <div class="card" onclick="showKnowledge('content')">
+                    <div class="knowledge-card-header">📚</div>
+                    <h3>Tipos de Contenido</h3>
+                    <p>8 formatos de valor para tu audiencia</p>
+                </div>
+                <div class="card" onclick="showKnowledge('niches')">
+                    <div class="knowledge-card-header">🏆</div>
+                    <h3>Nichos Rentables</h3>
+                    <p>8 nichos probados para afiliados</p>
+                </div>
+                <div class="card" onclick="showKnowledge('script')">
+                    <div class="knowledge-card-header">📖</div>
+                    <h3>Guión WhatsApp</h3>
+                    <p>Script completo de ventas</p>
+                </div>
+                <div class="card" onclick="showKnowledge('warmup')">
+                    <div class="knowledge-card-header">🌡️</div>
+                    <h3>Warm Up Grupos</h3>
+                    <p>5 pasos para activar grupos</p>
+                </div>
+                <div class="card" onclick="showKnowledge('metrics')">
+                    <div class="knowledge-card-header">📈</div>
+                    <h3>Métricas Clave</h3>
+                    <p>6 KPIs para medir tu éxito</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Facebook Poster View -->
+        <section id="view-facebook" class="view">
+            <div class="view-header">
+                <h2>🐘 Facebook Poster</h2>
+                <p class="subtitle">Publicación automática en grupos de Facebook con SeleniumBase</p>
+            </div>
+
+            <div class="stats-grid" id="fbStats">
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="fbPostsToday">0</span>
+                        <span class="stat-label">Posts Hoy</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="fbSuccess">0</span>
+                        <span class="stat-label">Exitosos</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">❌</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="fbFailures">0</span>
+                        <span class="stat-label">Fallidos</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="fbRate">0%</span>
+                        <span class="stat-label">Tasa Éxito</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>⚙️ Configuración</h3>
+                <div class="config-group" style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                        <input type="checkbox" id="fbEnabled" onchange="toggleFacebook()">
+                        <span>Habilitar Facebook Poster</span>
+                    </label>
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <label>Límite diario:</label>
+                        <input type="number" id="fbMaxPosts" value="5" min="1" max="20"
+                               style="width:70px;padding:6px 10px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;color:var(--text-primary)">
+                        <button class="btn btn-secondary" onclick="saveFbConfig()">Guardar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🎯 Perfil de Chrome</h3>
+                <div id="fbProfileStatus">
+                    <p class="empty-state">⏳ Cargando estado del perfil...</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🚀 Acciones</h3>
+                <div style="display:flex;gap:12px;flex-wrap:wrap">
+                    <button class="btn btn-primary" onclick="fbSetupProfile()">🔧 Configurar Perfil Chrome</button>
+                    <button class="btn btn-primary" onclick="fbPostNow()" id="fbPostBtn">🚀 Publicar Ahora</button>
+                    <button class="btn btn-secondary" onclick="loadFacebookView()">🔄 Refrescar Estado</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📋 Últimas Publicaciones</h3>
+                <div class="table-container" id="fbPostLog">
+                    <p class="empty-state">No hay publicaciones registradas.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Config View -->
+        <section id="view-config" class="view">
+            <div class="view-header">
+                <h2>⚙️ Configuración</h2>
+            </div>
+            <div class="card">
+                <form id="configForm" onsubmit="saveConfig(event)">
+                    <div class="form-group">
+                        <label>Nicho de Mercado</label>
+                        <input type="text" id="configNiche" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Fan Page de Facebook</label>
+                        <input type="text" id="configFanPage" />
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp (con código de país)</label>
+                        <input type="text" id="configWhatsapp" placeholder="+584141234567" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" id="modalContent">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
